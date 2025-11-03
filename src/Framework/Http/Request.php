@@ -2,15 +2,24 @@
 
 namespace Framework\Http;
 
-class Request //WTF
+class Request
 {
+    private array $queryParams;
+    private ?array $parsedBody;
+
+    public function __construct(array $queryParams = [], ?array $parsedBody = null)
+    {
+        $this->queryParams = $queryParams;
+        $this->parsedBody = $parsedBody;
+    }
+
     public function getQueryParams(): array
     {
-        return $_GET;
+        return $this->queryParams;
     }
 
     public function getParsedBody(): ?array
     {
-        return $_POST ?: null;
+        return $this->parsedBody ?: null;
     }
 }
