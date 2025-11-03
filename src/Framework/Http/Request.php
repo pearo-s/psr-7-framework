@@ -2,7 +2,7 @@
 
 namespace Framework\Http;
 
-class Request
+class Request //WTF
 {
     public function getQueryParams(): array
     {
