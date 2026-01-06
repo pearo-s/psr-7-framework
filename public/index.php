@@ -1,13 +1,20 @@
 <?php
 
-use Framework\Http\Request;
+use Framework\Http\RequestFactory;
+use Framework\Http\Response;
 
 chdir(dirname(__DIR__));
 require 'vendor/autoload.php';
 
-$request = new Request($_GET, $_POST);
+$request = RequestFactory::fromGlobals($_GET, $_POST);
 
-$name = ucfirst($request->getQueryParams()['name']) ?? 'Guest';
+$name = $request->getQueryParams()['name'] ?? 'Guest';
 
-header('X-Developer: suck');
-echo 'Hello, ' . $name . PHP_EOL;
+$response = (new Response('Hello, ' . $name . '!'))
+    ->withHeader('X-Developer', 'ElisDN');
+
+header('HTTP/1.0' . $response->getStatusCode() . ' ' . $response->getReasonPhrase());
+foreach ($response->getHeaders() as $name => $value) {
+    header($name . ':' . $value);
+}
+echo $response->getBody();
