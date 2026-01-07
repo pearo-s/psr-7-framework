@@ -1,20 +1,18 @@
 <?php
 
-use Framework\Http\RequestFactory;
-use Framework\Http\Response;
+use Laminas\Diactoros\Response\HtmlResponse;
+use Laminas\Diactoros\ServerRequestFactory;
+use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 
 chdir(dirname(__DIR__));
 require 'vendor/autoload.php';
 
-$request = RequestFactory::fromGlobals($_GET, $_POST);
+$request = ServerRequestFactory::fromGlobals();
 
 $name = $request->getQueryParams()['name'] ?? 'Guest';
 
-$response = (new Response('Hello, ' . $name . '!'))
+$response = (new HtmlResponse('Hello, ' . $name . '!'))
     ->withHeader('X-Developer', 'ElisDN');
 
-header('HTTP/1.0' . $response->getStatusCode() . ' ' . $response->getReasonPhrase());
-foreach ($response->getHeaders() as $name => $value) {
-    header($name . ':' . $value);
-}
-echo $response->getBody();
+$emitter = new SapiEmitter();
+$emitter->emit($response);
