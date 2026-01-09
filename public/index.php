@@ -4,6 +4,7 @@ use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
+use Psr\Http\Message\ServerRequestInterface;
 
 chdir(dirname(__DIR__));
 require 'vendor/autoload.php';
@@ -19,6 +20,10 @@ $path = $request->getUri()->getPath();
 if ($path === '/') {
     $name = $request->getQueryParams()['name'] ?? 'Guest';
     $response = new HtmlResponse('Hello, ' . $name . '!');
+    $action = function (ServerRequestInterface $request) {
+        $name = $request->getQueryParams()['name'] ?? 'Guest';
+        return new HtmlResponse('Hello, ' . $name . '!');
+    };
 } elseif ($path === '/about') {
     $response = new HtmlResponse('I am a simple site');
 } elseif ($path === '/blog') {
